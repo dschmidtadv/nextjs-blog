@@ -1,0 +1,26 @@
+# .appspec.yml
+
+# ... here be your existing CodeDeploy configuration.
+version: 0.0
+os: linux
+files:
+  - source: /wp-content/
+    destination: /opt/bitnami/apps/wordpress/htdocs/wp-content/
+
+# This section controls the action:
+branch_config:
+    wip\/.*: ~
+
+    '.*':
+        deploymentGroupName: drr-group
+        deploymentGroupConfig:
+            serviceRoleArn: arn:aws:iam::176804238562:role/CodeDeployServiceRole
+        deploymentConfig:
+            fileExistsBehavior: OVERWRITE
+            autoRollbackConfiguration:
+                #enabled: true
+
+    '.*www':
+        deploymentGroupName: $BRANCH.staging.acme.tld
+        deploymentGroupConfig:
+            serviceRoleArn: arn:aws:iam::176804238562:role/CodeDeployServiceRole
